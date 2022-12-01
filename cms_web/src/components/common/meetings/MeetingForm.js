@@ -39,7 +39,7 @@ const MeetingForm = (props) => {
     meeting_link: Yup.string().required("Meeting Link is required"),
     starts_at: Yup.string().required("Starts At is required"),
     ends_at: Yup.string().required("Ends At is required"),
-    mom: Yup.string().required("MOM is required"),
+    mom: Yup.string(),
   });
 
   const onSubmit = (values, { setSubmitting }) => {
@@ -103,7 +103,7 @@ const MeetingForm = (props) => {
               <InputField direction="column" isInline={false} label="Meeting Link" name="meeting_link" isRequired {...props} />
               <DatePickerField dateFormat="dd/MM/yyyy, hh:mm a" showTimeSelect label="Starts At" name="starts_at" isRequired {...props} />
               <DatePickerField dateFormat="dd/MM/yyyy, hh:mm a" showTimeSelect label="Ends At" name="ends_at" isRequired {...props} />
-              <TextAreaField label="MOM" name="mom" placeholder="Enter requirements" isRequired showHeader={true} {...props} />
+              <TextAreaField label="MOM" name="mom" placeholder="Enter..." showHeader={true} {...props} />
               <Stack isInline justifyContent="center" spacing="8">
                 <Button variant="outline" color="primary" onClick={onClose}>
                   Cancel

@@ -8,7 +8,7 @@ const createMeetingSchema = Joi.object({
   meeting_link: Joi.string().required(),
   starts_at: Joi.date().required(),
   ends_at: Joi.date().required(),
-  mom: Joi.string().required(),
+  mom: Joi.string().allow(""),
 });
 
 const createMeetingValidationMiddleware = asyncHandler(async (request, _, next) => {

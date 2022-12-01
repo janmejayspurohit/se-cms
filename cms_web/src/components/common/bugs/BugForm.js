@@ -2,11 +2,11 @@ import React from "react";
 import useCustomToastr from "../../../utils/useCustomToastr";
 import * as Yup from "yup";
 import api from "../../../services/api";
-import { MEETINGS, ACTIVE_PROJECTS } from "../../../constants/apiRoutes";
+import { BUGS, ACTIVE_PROJECTS } from "../../../constants/apiRoutes";
 import { formattedErrorMessage } from "../../../utils/formattedErrorMessage";
 import { Box, Divider, Stack, Text } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
-import { DatePickerField, InputField, SelectField, TextAreaField } from "../../formik";
+import { DatePickerField, SelectField, TextAreaField } from "../../formik";
 import Button from "../Button";
 
 const BugForm = (props) => {
@@ -30,10 +30,10 @@ const BugForm = (props) => {
     let apiRequest;
     let message = "Bug added successfully";
     if (bug_id) {
-      apiRequest = api.put(`${MEETINGS}/${bug_id}`, values);
+      apiRequest = api.put(`${BUGS}/${bug_id}`, values);
       message = "Bug updated successfully";
     } else {
-      apiRequest = api.post(MEETINGS, values);
+      apiRequest = api.post(BUGS, values);
     }
     apiRequest
       .then(() => {

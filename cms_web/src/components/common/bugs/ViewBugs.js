@@ -37,15 +37,17 @@ const ViewBugs = () => {
     {
       header: "Project",
       accessor: "project",
-      cellRenderer: (params) => params.data.name,
+      cellRenderer: (params) => params.data.project.name,
     },
     {
       header: "Description",
-      accessor: "bug_id",
+      accessor: "description",
+      width: 370,
     },
     {
       header: "Deadline",
       accessor: "deadline",
+      width: 270,
       cellRenderer: (params) => formattedTimestamp({ timestamp: params.data.ends_at }),
     },
     {
