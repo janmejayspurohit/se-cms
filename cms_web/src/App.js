@@ -26,6 +26,8 @@ import { ViewTechs } from "./components/common/techs";
 import { ViewUsers } from "./components/common/users";
 import { ViewProjects } from "./components/common/projects";
 import { ViewCustomers } from "./components/common/customers";
+import { ViewMeetings } from "./components/common/meetings";
+import { ViewBugs } from "./components/common/bugs";
 
 const App = () => {
   return (
@@ -40,6 +42,8 @@ const App = () => {
           <Route path="profile" element={<Profile />} />
           <Route path="profile/edit" element={<ProfileEdit />} />
           <Route path="projects" element={<ViewProjects />} />
+          <Route path="meetings" element={<ViewMeetings />} />
+          <Route path="bugs" element={<ViewBugs />} />
         </Route>
         <Route path="admin" element={<WithAdmin />}>
           <Route path="home" element={<AdminHome />} />
@@ -49,6 +53,8 @@ const App = () => {
           <Route path="users" element={<ViewUsers />} />
           <Route path="customers" element={<ViewCustomers />} />
           <Route path="projects" element={<ViewProjects />} />
+          <Route path="meetings" element={<ViewMeetings />} />
+          <Route path="bugs" element={<ViewBugs />} />
         </Route>
         <Route path="*" element={<Lost />} />
       </Routes>

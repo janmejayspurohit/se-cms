@@ -2,26 +2,27 @@ import { Box, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeade
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AgGrid } from "..";
-import { PROJECTS } from "../../../constants/apiRoutes";
+import { BUGS } from "../../../constants/apiRoutes";
 import api from "../../../services/api";
 import { formattedErrorMessage } from "../../../utils/formattedErrorMessage";
+import { formattedTimestamp } from "../../../utils/formattedTimestamp";
 import useCustomToastr from "../../../utils/useCustomToastr";
 import Button from "../Button";
 import CustomSpinner from "../CustomSpinner";
 import Layout from "../Layout";
-import ProjectForm from "./ProjectForm";
+import BugForm from "./BugForm";
 
-const ViewProjects = () => {
+const ViewBugs = () => {
   const toast = useCustomToastr();
-  const [projectsData, setProjectsData] = React.useState({});
+  const [bugsData, setBugsData] = React.useState({});
   const [searchParams, setSearchParams] = useSearchParams();
-  const { projects = [], ...initialQuery } = projectsData;
-  const [projectsQuery, setProjectsQuery] = React.useState({
+  const { bugs = [], ...initialQuery } = bugsData;
+  const [bugsQuery, setBugsQuery] = React.useState({
     page: Number(searchParams.get("page")) || initialQuery.page,
     size: Number(searchParams.get("size")) || initialQuery.size,
   });
   const [loading, setLoading] = React.useState(false);
-  const { isOpen: isCreateProjectOpen, onOpen: onCreateProjectOpen, onClose: onCreateProjectClose } = useDisclosure();
+  const { isOpen: isCreateBugOpen, onOpen: onCreateBugOpen, onClose: onCreateBugClose } = useDisclosure();
 
   // GRID STATES
   const [, setGridApi] = useState(null);
@@ -34,29 +35,18 @@ const ViewProjects = () => {
       width: 70,
     },
     {
-      header: "Project Name",
-      accessor: "name",
+      header: "Project",
+      accessor: "project",
+      cellRenderer: (params) => params.data.name,
     },
     {
-      header: "Customer",
-      accessor: "customer",
+      header: "Description",
+      accessor: "bug_id",
     },
     {
-      header: "Manager",
-      accessor: "manager",
-    },
-    {
-      header: "No. of Engineers",
-      accessor: "assigned_engineers",
-      cellRenderer: ({ value }) => value.length,
-    },
-    {
-      header: "Requirements",
-      accessor: "requirements",
-    },
-    {
-      header: "Status",
-      accessor: "status",
+      header: "Deadline",
+      accessor: "deadline",
+      cellRenderer: (params) => formattedTimestamp({ timestamp: params.data.ends_at }),
     },
     {
       header: "Actions",
@@ -66,19 +56,19 @@ const ViewProjects = () => {
   ];
 
   const GetEditForm = (props) => {
-    const { isOpen: isEditProjectOpen, onOpen: onEditProjectOpen, onClose: onEditProjectClose } = useDisclosure();
+    const { isOpen: isEditBugOpen, onOpen: onEditBugOpen, onClose: onEditBugClose } = useDisclosure();
     return (
       <Box>
-        <Button size="xs" onClick={() => onEditProjectOpen()}>
-          Edit Project
+        <Button size="xs" onClick={() => onEditBugOpen()}>
+          Edit Bug
         </Button>
-        <Modal isOpen={isEditProjectOpen} onClose={onEditProjectClose}>
+        <Modal isOpen={isEditBugOpen} onClose={onEditBugClose}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Edit Project</ModalHeader>
+            <ModalHeader>Edit Bug</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <ProjectForm {...props} onClose={onEditProjectClose} pageRefresher={fetchProjects} />
+              <BugForm {...props} onClose={onEditBugClose} pageRefresher={fetchBugs} />
             </ModalBody>
           </ModalContent>
         </Modal>
@@ -87,22 +77,20 @@ const ViewProjects = () => {
   };
 
   const rowData = React.useMemo(() => {
-    let projectsClone = projects && projects.slice();
-    return projectsClone.map((p, i) => ({
-      ...p,
+    let bugsClone = bugs && bugs.slice();
+    return bugsClone.map((c, i) => ({
+      ...c,
       sno: (initialQuery.page - 1) * initialQuery.size + i + 1,
-      name: p.name || "-",
-      customer: p.customer?.company_name || "-",
-      manager: p.manager?.name || "-",
+      name: c.name || "-",
     }));
-  }, [projects]);
+  }, [bugs]);
 
-  const fetchProjects = (query = {}) => {
+  const fetchBugs = (query = {}) => {
     setLoading(true);
     api
-      .get(PROJECTS + "?" + new URLSearchParams(query))
+      .get(BUGS + "?" + new URLSearchParams(query))
       .then((response) => {
-        setProjectsData(response.data);
+        setBugsData(response.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -112,17 +100,17 @@ const ViewProjects = () => {
       });
   };
 
-  const handlePaginationChange = ({ page = projectsQuery.page, size = projectsQuery.size }) => {
-    if (page !== projectsQuery.page) setProjectsQuery({ ...projectsQuery, page });
-    if (size !== projectsQuery.size) setProjectsQuery({ ...projectsQuery, page: 1, size: size });
+  const handlePaginationChange = ({ page = bugsQuery.page, size = bugsQuery.size }) => {
+    if (page !== bugsQuery.page) setBugsQuery({ ...bugsQuery, page });
+    if (size !== bugsQuery.size) setBugsQuery({ ...bugsQuery, page: 1, size: size });
     return;
   };
 
   React.useEffect(() => {
-    const { page = 1, size = 50 } = projectsQuery;
+    const { page = 1, size = 50 } = bugsQuery;
     setSearchParams({ page, size });
-    fetchProjects({ page, size });
-  }, [projectsQuery]);
+    fetchBugs({ page, size });
+  }, [bugsQuery]);
 
   return (
     <Layout>
@@ -130,14 +118,14 @@ const ViewProjects = () => {
         <CustomSpinner />
       ) : (
         <Box>
-          <Button onClick={() => onCreateProjectOpen()}>Create Project</Button>
-          <Modal isOpen={isCreateProjectOpen} onClose={onCreateProjectClose}>
+          <Button onClick={() => onCreateBugOpen()}>Create Bug</Button>
+          <Modal isOpen={isCreateBugOpen} onClose={onCreateBugClose}>
             <ModalOverlay />
             <ModalContent>
-              <ModalHeader>Create Project</ModalHeader>
+              <ModalHeader>Create Bug</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
-                <ProjectForm onClose={onCreateProjectClose} pageRefresher={fetchProjects} />
+                <BugForm onClose={onCreateBugClose} pageRefresher={fetchBugs} />
               </ModalBody>
             </ModalContent>
           </Modal>
@@ -162,4 +150,4 @@ const ViewProjects = () => {
   );
 };
 
-export default ViewProjects;
+export default ViewBugs;

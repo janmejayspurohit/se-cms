@@ -12,6 +12,26 @@ AuthToken.belongsTo(User, {
   as: "user",
 });
 
+Project.belongsTo(User, {
+  foreignKey: "project_manager",
+  as: "manager",
+});
+
+Project.belongsTo(Customer, {
+  foreignKey: "customer_id",
+  as: "customer",
+});
+
+Meeting.belongsTo(Project, {
+  foreignKey: "project_id",
+  as: "project",
+});
+
+Bug.belongsTo(Project, {
+  foreignKey: "project_id",
+  as: "project",
+});
+
 module.exports = {
   AuthToken,
   User,

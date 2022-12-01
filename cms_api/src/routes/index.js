@@ -8,6 +8,8 @@ const generalRouter = require("./general");
 const techsRouter = require("./techs");
 const projectsRouter = require("./projects");
 const customersRouter = require("./customers");
+const meetingsRouter = require("./meetings");
+const bugsRouter = require("./bugs");
 
 const router = require("express").Router();
 
@@ -28,5 +30,7 @@ router.use("/users", authenticateMiddleware, usersRouter);
 router.use("/techs", authenticateMiddleware, techsRouter);
 router.use("/projects", authenticateMiddleware, projectsRouter);
 router.use("/customers", authenticateMiddleware, customersRouter);
+router.use("/meetings", authenticateMiddleware, meetingsRouter);
+router.use("/bugs", authenticateMiddleware, bugsRouter);
 
 module.exports = router;

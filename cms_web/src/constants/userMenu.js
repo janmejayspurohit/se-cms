@@ -13,6 +13,16 @@ const userPrimaryMenu = [
     link: "/user/projects",
     icon: <FaClipboardList color="white" />,
   },
+  {
+    name: "Meetings",
+    link: "/user/meetings",
+    icon: <FaClipboardList color="white" />,
+  },
+  {
+    name: "Bugs",
+    link: "/user/bugs",
+    icon: <FaClipboardList color="white" />,
+  },
 ];
 
 export default userPrimaryMenu;

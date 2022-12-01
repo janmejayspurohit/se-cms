@@ -20,18 +20,28 @@ const adminPrimaryMenu = [
     icon: <FaClipboardList color="white" />,
   },
   {
-    name: "Manage Users",
+    name: "Users",
     link: "/admin/users",
     icon: <FaClipboardList color="white" />,
   },
   {
-    name: "Manage Customers",
+    name: "Customers",
     link: "/admin/customers",
     icon: <FaClipboardList color="white" />,
   },
   {
-    name: "Manage Projects",
+    name: "Projects",
     link: "/admin/projects",
+    icon: <FaClipboardList color="white" />,
+  },
+  {
+    name: "Meetings",
+    link: "/admin/meetings",
+    icon: <FaClipboardList color="white" />,
+  },
+  {
+    name: "Bugs",
+    link: "/admin/bugs",
     icon: <FaClipboardList color="white" />,
   },
 ];

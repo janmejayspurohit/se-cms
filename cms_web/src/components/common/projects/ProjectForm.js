@@ -111,17 +111,19 @@ const ProjectForm = (props) => {
                   <Text>{project_id}</Text>
                 </Stack>
               )}
-              <SelectField
-                {...props}
-                isRequired
-                name="customer_id"
-                label="Customer"
-                placeholder="Select customer"
-                options={customers.map((c) => ({
-                  value: c.id,
-                  label: c.company_name,
-                }))}
-              />
+              {customers.length > 0 && (
+                <SelectField
+                  {...props}
+                  isRequired
+                  name="customer_id"
+                  label="Customer"
+                  placeholder="Select customer"
+                  options={customers.map((c) => ({
+                    value: c.id,
+                    label: c.company_name,
+                  }))}
+                />
+              )}
               <InputField direction="column" isInline={false} label="Name" name="name" isRequired {...props} />
               <TextAreaField
                 label="Requirements"
@@ -131,18 +133,20 @@ const ProjectForm = (props) => {
                 showHeader={true}
                 {...props}
               />
-              <SelectField
-                {...props}
-                isRequired
-                name="project_manager"
-                label="Project Manager"
-                placeholder="Select..."
-                disabled={user.role === "user"}
-                options={users.map((c) => ({
-                  value: c.id,
-                  label: c.name,
-                }))}
-              />
+              {users.length > 0 && (
+                <SelectField
+                  {...props}
+                  isRequired
+                  name="project_manager"
+                  label="Project Manager"
+                  placeholder="Select..."
+                  disabled={user.role === "user"}
+                  options={users.map((c) => ({
+                    value: c.id,
+                    label: c.name,
+                  }))}
+                />
+              )}
               {users.length > 0 && (
                 <MultiSelectField
                   {...props}

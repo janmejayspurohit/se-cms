@@ -16,7 +16,14 @@ export const ALL_USERS = "/users/all";
 
 // Projects
 export const PROJECTS = "/projects";
+export const ACTIVE_PROJECTS = "/projects/active";
 
 // Customers
 export const CUSTOMERS = "/customers";
 export const ALL_CUSTOMERS = "/customers/all";
+
+// Meetings
+export const MEETINGS = "/meetings";
+
+// Bugs
+export const BUGS = "/bugs";

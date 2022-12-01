@@ -2,26 +2,27 @@ import { Box, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeade
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AgGrid } from "..";
-import { PROJECTS } from "../../../constants/apiRoutes";
+import { MEETINGS } from "../../../constants/apiRoutes";
 import api from "../../../services/api";
 import { formattedErrorMessage } from "../../../utils/formattedErrorMessage";
+import { formattedTimestamp } from "../../../utils/formattedTimestamp";
 import useCustomToastr from "../../../utils/useCustomToastr";
 import Button from "../Button";
 import CustomSpinner from "../CustomSpinner";
 import Layout from "../Layout";
-import ProjectForm from "./ProjectForm";
+import MeetingForm from "./MeetingForm";
 
-const ViewProjects = () => {
+const ViewMeetings = () => {
   const toast = useCustomToastr();
-  const [projectsData, setProjectsData] = React.useState({});
+  const [meetingsData, setMeetingsData] = React.useState({});
   const [searchParams, setSearchParams] = useSearchParams();
-  const { projects = [], ...initialQuery } = projectsData;
-  const [projectsQuery, setProjectsQuery] = React.useState({
+  const { meetings = [], ...initialQuery } = meetingsData;
+  const [meetingsQuery, setMeetingsQuery] = React.useState({
     page: Number(searchParams.get("page")) || initialQuery.page,
     size: Number(searchParams.get("size")) || initialQuery.size,
   });
   const [loading, setLoading] = React.useState(false);
-  const { isOpen: isCreateProjectOpen, onOpen: onCreateProjectOpen, onClose: onCreateProjectClose } = useDisclosure();
+  const { isOpen: isCreateMeetingOpen, onOpen: onCreateMeetingOpen, onClose: onCreateMeetingClose } = useDisclosure();
 
   // GRID STATES
   const [, setGridApi] = useState(null);
@@ -35,28 +36,26 @@ const ViewProjects = () => {
     },
     {
       header: "Project Name",
-      accessor: "name",
+      accessor: "project",
+      cellRenderer: (params) => params.data.project.name,
     },
     {
-      header: "Customer",
-      accessor: "customer",
+      header: "Meeting ID",
+      accessor: "meeting_id",
     },
     {
-      header: "Manager",
-      accessor: "manager",
+      header: "Meeting Link",
+      accessor: "meeting_link",
     },
     {
-      header: "No. of Engineers",
-      accessor: "assigned_engineers",
-      cellRenderer: ({ value }) => value.length,
+      header: "Starts At",
+      accessor: "starts_at",
+      cellRenderer: (params) => formattedTimestamp({ timestamp: params.data.starts_at }),
     },
     {
-      header: "Requirements",
-      accessor: "requirements",
-    },
-    {
-      header: "Status",
-      accessor: "status",
+      header: "Ends At",
+      accessor: "ends_at",
+      cellRenderer: (params) => formattedTimestamp({ timestamp: params.data.ends_at }),
     },
     {
       header: "Actions",
@@ -66,19 +65,19 @@ const ViewProjects = () => {
   ];
 
   const GetEditForm = (props) => {
-    const { isOpen: isEditProjectOpen, onOpen: onEditProjectOpen, onClose: onEditProjectClose } = useDisclosure();
+    const { isOpen: isEditMeetingOpen, onOpen: onEditMeetingOpen, onClose: onEditMeetingClose } = useDisclosure();
     return (
       <Box>
-        <Button size="xs" onClick={() => onEditProjectOpen()}>
-          Edit Project
+        <Button size="xs" onClick={() => onEditMeetingOpen()}>
+          Edit Meeting
         </Button>
-        <Modal isOpen={isEditProjectOpen} onClose={onEditProjectClose}>
+        <Modal isOpen={isEditMeetingOpen} onClose={onEditMeetingClose}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Edit Project</ModalHeader>
+            <ModalHeader>Edit Meeting</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <ProjectForm {...props} onClose={onEditProjectClose} pageRefresher={fetchProjects} />
+              <MeetingForm {...props} onClose={onEditMeetingClose} pageRefresher={fetchMeetings} />
             </ModalBody>
           </ModalContent>
         </Modal>
@@ -87,22 +86,20 @@ const ViewProjects = () => {
   };
 
   const rowData = React.useMemo(() => {
-    let projectsClone = projects && projects.slice();
-    return projectsClone.map((p, i) => ({
-      ...p,
+    let meetingsClone = meetings && meetings.slice();
+    return meetingsClone.map((c, i) => ({
+      ...c,
       sno: (initialQuery.page - 1) * initialQuery.size + i + 1,
-      name: p.name || "-",
-      customer: p.customer?.company_name || "-",
-      manager: p.manager?.name || "-",
+      name: c.name || "-",
     }));
-  }, [projects]);
+  }, [meetings]);
 
-  const fetchProjects = (query = {}) => {
+  const fetchMeetings = (query = {}) => {
     setLoading(true);
     api
-      .get(PROJECTS + "?" + new URLSearchParams(query))
+      .get(MEETINGS + "?" + new URLSearchParams(query))
       .then((response) => {
-        setProjectsData(response.data);
+        setMeetingsData(response.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -112,17 +109,17 @@ const ViewProjects = () => {
       });
   };
 
-  const handlePaginationChange = ({ page = projectsQuery.page, size = projectsQuery.size }) => {
-    if (page !== projectsQuery.page) setProjectsQuery({ ...projectsQuery, page });
-    if (size !== projectsQuery.size) setProjectsQuery({ ...projectsQuery, page: 1, size: size });
+  const handlePaginationChange = ({ page = meetingsQuery.page, size = meetingsQuery.size }) => {
+    if (page !== meetingsQuery.page) setMeetingsQuery({ ...meetingsQuery, page });
+    if (size !== meetingsQuery.size) setMeetingsQuery({ ...meetingsQuery, page: 1, size: size });
     return;
   };
 
   React.useEffect(() => {
-    const { page = 1, size = 50 } = projectsQuery;
+    const { page = 1, size = 50 } = meetingsQuery;
     setSearchParams({ page, size });
-    fetchProjects({ page, size });
-  }, [projectsQuery]);
+    fetchMeetings({ page, size });
+  }, [meetingsQuery]);
 
   return (
     <Layout>
@@ -130,14 +127,14 @@ const ViewProjects = () => {
         <CustomSpinner />
       ) : (
         <Box>
-          <Button onClick={() => onCreateProjectOpen()}>Create Project</Button>
-          <Modal isOpen={isCreateProjectOpen} onClose={onCreateProjectClose}>
+          <Button onClick={() => onCreateMeetingOpen()}>Create Meeting</Button>
+          <Modal isOpen={isCreateMeetingOpen} onClose={onCreateMeetingClose}>
             <ModalOverlay />
             <ModalContent>
-              <ModalHeader>Create Project</ModalHeader>
+              <ModalHeader>Create Meeting</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
-                <ProjectForm onClose={onCreateProjectClose} pageRefresher={fetchProjects} />
+                <MeetingForm onClose={onCreateMeetingClose} pageRefresher={fetchMeetings} />
               </ModalBody>
             </ModalContent>
           </Modal>
@@ -162,4 +159,4 @@ const ViewProjects = () => {
   );
 };
 
-export default ViewProjects;
+export default ViewMeetings;

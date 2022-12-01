@@ -18,13 +18,11 @@ router.get(
       query: { page = 0, size = 10 },
     } = request;
     let where = null;
-    if (request.authUser.role == User.ROLES.ADMIN) {
-    } else if (request.authUser.role == User.ROLES.USER) {
+    if (request.authUser.role == User.ROLES.USER) {
       where = {
         [Op.or]: [{ assigned_engineers: { [Op.contains]: [request.authUser.id] } }, { project_manager: request.authUser.id }],
       };
-    } else return HttpBadRequest("Something went wrong, please try again!");
-
+    }
     const {
       size: sizeValue,
       page: pageValue,
@@ -35,6 +33,7 @@ router.get(
       Project,
       {
         where,
+        include: ["manager", "customer"],
         order: [["created_at", "ASC"]],
       },
       { page, size }
@@ -53,9 +52,14 @@ router.get(
 router.get(
   "/active",
   asyncHandler(async (request, _, next) => {
-    const projects = await Project.findAll({ where: { is_active: true } });
+    const projects = await Project.findAll({
+      where: {
+        status: { [Op.notIn]: [Project.STATUSES.DROPPED, Project.STATUSES.COMPLETED] },
+      },
+      order: [["created_at", "ASC"]],
+    });
     if (!projects) throw new HttpBadRequest("Something went wrong, please try again!");
-    next(AppResponse.success({ data: projects }));
+    next(AppResponse.success({ data: { projects } }));
   })
 );
 
