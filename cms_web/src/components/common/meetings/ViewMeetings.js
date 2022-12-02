@@ -69,7 +69,7 @@ const ViewMeetings = () => {
     return (
       <Box>
         <Button size="xs" onClick={() => onEditMeetingOpen()}>
-          Edit Meeting
+          Edit
         </Button>
         <Modal isOpen={isEditMeetingOpen} onClose={onEditMeetingClose}>
           <ModalOverlay />
@@ -81,6 +81,25 @@ const ViewMeetings = () => {
             </ModalBody>
           </ModalContent>
         </Modal>
+        <Button
+          size="xs"
+          colorScheme="red"
+          ml="2"
+          onClick={() => {
+            api
+              .remove(`${MEETINGS}/${props.id}`)
+              .then(() => {
+                toast.showSuccess("Meeting deleted successfully!");
+                fetchMeetings();
+              })
+              .catch((error) => {
+                const e = formattedErrorMessage(error);
+                toast.showError(e);
+              });
+          }}
+        >
+          Delete
+        </Button>
       </Box>
     );
   };

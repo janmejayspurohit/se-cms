@@ -62,7 +62,7 @@ const ViewBugs = () => {
     return (
       <Box>
         <Button size="xs" onClick={() => onEditBugOpen()}>
-          Edit Bug
+          Edit
         </Button>
         <Modal isOpen={isEditBugOpen} onClose={onEditBugClose}>
           <ModalOverlay />
@@ -74,6 +74,25 @@ const ViewBugs = () => {
             </ModalBody>
           </ModalContent>
         </Modal>
+        <Button
+          size="xs"
+          colorScheme="red"
+          ml="2"
+          onClick={() => {
+            api
+              .remove(`${BUGS}/${props.id}`)
+              .then(() => {
+                toast.showSuccess("Bug deleted successfully!");
+                fetchBugs();
+              })
+              .catch((error) => {
+                const e = formattedErrorMessage(error);
+                toast.showError(e);
+              });
+          }}
+        >
+          Delete
+        </Button>
       </Box>
     );
   };

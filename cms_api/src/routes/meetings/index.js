@@ -103,4 +103,22 @@ router.put(
   })
 );
 
+router.delete(
+  "/:id",
+  asyncHandler(async (request, _, next) => {
+    const { id } = request.params;
+    const meeting = await Meeting.findByPk(id);
+
+    if (!meeting) throw new HttpBadRequest("Something went wrong, please try again!");
+
+    await meeting.destroy();
+
+    next(
+      AppResponse.success({
+        data: {},
+      })
+    );
+  })
+);
+
 module.exports = router;

@@ -44,6 +44,11 @@ const adminPrimaryMenu = [
     link: "/admin/bugs",
     icon: <FaClipboardList color="white" />,
   },
+  {
+    name: "CSV Uplaod",
+    link: "/admin/upload",
+    icon: <FaClipboardList color="white" />,
+  },
 ];
 
 export default adminPrimaryMenu;

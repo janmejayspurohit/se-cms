@@ -28,6 +28,7 @@ import { ViewProjects } from "./components/common/projects";
 import { ViewCustomers } from "./components/common/customers";
 import { ViewMeetings } from "./components/common/meetings";
 import { ViewBugs } from "./components/common/bugs";
+import Upload from "./components/common/uploads/Upload";
 
 const App = () => {
   return (
@@ -55,6 +56,7 @@ const App = () => {
           <Route path="projects" element={<ViewProjects />} />
           <Route path="meetings" element={<ViewMeetings />} />
           <Route path="bugs" element={<ViewBugs />} />
+          <Route path="upload" element={<Upload />} />
         </Route>
         <Route path="*" element={<Lost />} />
       </Routes>

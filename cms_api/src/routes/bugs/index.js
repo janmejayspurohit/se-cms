@@ -103,4 +103,22 @@ router.put(
   })
 );
 
+router.delete(
+  "/:id",
+  asyncHandler(async (request, _, next) => {
+    const { id } = request.params;
+    const bug = await Bug.findByPk(id);
+
+    if (!bug) throw new HttpBadRequest("Something went wrong, please try again!");
+
+    await bug.destroy();
+
+    next(
+      AppResponse.success({
+        data: {},
+      })
+    );
+  })
+);
+
 module.exports = router;

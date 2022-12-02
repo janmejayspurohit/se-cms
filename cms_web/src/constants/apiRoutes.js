@@ -7,6 +7,9 @@ export const LOGOUT = "/auth/logout";
 export const PROFILE = "/me";
 export const USER = (id) => `/users/${id}`;
 
+// General
+export const UPLOAD = "/general/upload";
+
 // Techs
 export const TECHS = "/techs";
 
