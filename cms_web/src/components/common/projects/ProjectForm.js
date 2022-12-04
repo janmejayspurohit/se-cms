@@ -2,14 +2,16 @@ import React from "react";
 import useCustomToastr from "../../../utils/useCustomToastr";
 import * as Yup from "yup";
 import api from "../../../services/api";
-import { ALL_CUSTOMERS, ALL_USERS, PROJECTS } from "../../../constants/apiRoutes";
+import { ALL_CUSTOMERS, ALL_USERS, PROJECTS, REQUIREMENTS_UPLOAD } from "../../../constants/apiRoutes";
 import { formattedErrorMessage } from "../../../utils/formattedErrorMessage";
-import { Box, Divider, FormLabel, Stack, Text } from "@chakra-ui/react";
+import { Box, Divider, FormLabel, Link, Spacer, Stack, Text } from "@chakra-ui/react";
 import { FieldArray, Form, Formik } from "formik";
 import { InputField, MultiSelectField, SelectField, TextAreaField } from "../../formik";
 import Button from "../Button";
 import { AiOutlineDelete } from "react-icons/ai";
 import { useAuth } from "../../../services/auth";
+import FileUploader from "../../../utils/FileUploader";
+import { BsTrash } from "react-icons/bs";
 
 const ProjectForm = (props) => {
   const {
@@ -27,12 +29,12 @@ const ProjectForm = (props) => {
   const toast = useCustomToastr();
   const [users, setUsers] = React.useState([]);
   const [customers, setCustomers] = React.useState([]);
+  const [returnLink, setReturnLink] = React.useState(requirements);
   const { user } = useAuth();
 
   let initialValues = {
     customer_id,
     name,
-    requirements,
     project_manager,
     assigned_engineers,
     timeline,
@@ -48,7 +50,6 @@ const ProjectForm = (props) => {
   const formSchema = Yup.object().shape({
     customer_id: Yup.string().required("Required"),
     name: Yup.string().required("Required"),
-    requirements: Yup.string().required("Required"),
     project_manager: Yup.string().required("Required"),
     assigned_engineers: Yup.array().required("Required"),
     timeline: Yup.array().required("Required"),
@@ -58,11 +59,16 @@ const ProjectForm = (props) => {
   const onSubmit = (values, { setSubmitting }) => {
     let apiRequest;
     let message = "Project added successfully";
+    if (!returnLink) {
+      setSubmitting(false);
+      return toast.showError({ description: "Requirements file not found, please upload again!" });
+    }
+    const data = { ...values, requirements: returnLink };
     if (project_id) {
-      apiRequest = api.put(`${PROJECTS}/${project_id}`, values);
+      apiRequest = api.put(`${PROJECTS}/${project_id}`, data);
       message = "Project updated successfully";
     } else {
-      apiRequest = api.post(PROJECTS, values);
+      apiRequest = api.post(PROJECTS, data);
     }
     apiRequest
       .then(() => {
@@ -125,14 +131,28 @@ const ProjectForm = (props) => {
                 />
               )}
               <InputField direction="column" isInline={false} label="Name" name="name" isRequired {...props} />
-              <TextAreaField
-                label="Requirements"
-                name={"requirements"}
-                placeholder="Enter requirements"
-                isRequired
-                showHeader={true}
-                {...props}
-              />
+              {returnLink ? (
+                <Stack isInline border="1px" borderColor="gray.200" p="2" align="center">
+                  <Text fontSize={16}>Requirements File:</Text>
+                  <Link href={returnLink}>
+                    <Text wordBreak={"break-word"}>{returnLink}</Text>
+                  </Link>
+                  <Spacer />
+                  <Button colorScheme="red" size="sm" onClick={() => setReturnLink("")}>
+                    <BsTrash />
+                  </Button>
+                </Stack>
+              ) : (
+                <FileUploader
+                  type="requirementsDoc"
+                  path={REQUIREMENTS_UPLOAD}
+                  setReturnLink={setReturnLink}
+                  accept={{
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
+                    "application/pdf": [".pdf"],
+                  }}
+                />
+              )}
               {users.length > 0 && (
                 <SelectField
                   {...props}

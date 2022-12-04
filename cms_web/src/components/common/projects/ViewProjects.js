@@ -74,7 +74,7 @@ const ViewProjects = () => {
         </Button>
         <Modal isOpen={isEditProjectOpen} onClose={onEditProjectClose}>
           <ModalOverlay />
-          <ModalContent>
+          <ModalContent minW="50vw">
             <ModalHeader>Edit Project</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
@@ -133,7 +133,7 @@ const ViewProjects = () => {
           <Button onClick={() => onCreateProjectOpen()}>Create Project</Button>
           <Modal isOpen={isCreateProjectOpen} onClose={onCreateProjectClose}>
             <ModalOverlay />
-            <ModalContent>
+            <ModalContent minW="50vw">
               <ModalHeader>Create Project</ModalHeader>
               <ModalCloseButton />
               <ModalBody>

@@ -41,10 +41,6 @@ router.post(
             status: user[7],
             role: user[8],
           };
-          console.log(
-            "🚀 -> file: index.js:46 -> Object.values(newUser)",
-            Object.values(newUser).some((u) => !u)
-          );
           if (Object.values(newUser).some((u) => !u)) return new HttpBadRequest("Invalid data");
           dataToInsert.push(newUser);
         });
@@ -69,6 +65,20 @@ router.post(
         })
       );
     });
+  })
+);
+
+router.post(
+  "/upload-project-requirements",
+  upload.single("file"),
+  asyncHandler(async (request, _, next) => {
+    next(
+      AppResponse.success({
+        data: {
+          link: request.file.destination + request.file.filename,
+        },
+      })
+    );
   })
 );
 

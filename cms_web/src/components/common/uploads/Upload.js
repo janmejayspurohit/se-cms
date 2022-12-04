@@ -6,7 +6,7 @@ import Layout from "../Layout";
 const Upload = () => {
   return (
     <Layout>
-      <FileUploader />
+      <FileUploader type="csvUpload" />
     </Layout>
   );
 };

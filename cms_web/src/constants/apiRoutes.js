@@ -9,6 +9,7 @@ export const USER = (id) => `/users/${id}`;
 
 // General
 export const UPLOAD = "/general/upload";
+export const REQUIREMENTS_UPLOAD = "/general/upload-project-requirements";
 
 // Techs
 export const TECHS = "/techs";

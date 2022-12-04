@@ -9,27 +9,36 @@ import { GrDocument } from "react-icons/gr";
 import api from "../services/api";
 import ReactSelect from "react-select";
 
-function FileUploader() {
+function FileUploader(props) {
   const [uploadedFile, setUploadedFile] = useState({});
   const [uploadType, setUploadType] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const toast = useCustomToastr();
+  const {
+    path = UPLOAD,
+    setReturnLink,
+    accept = {
+      "text/csv": [".csv"],
+    },
+    type = "",
+  } = props;
 
   const onSubmit = () => {
-    if (!uploadType.value) return toast.showError({ description: "Please select the type of upload" });
+    if (type == "csvUpload" && !uploadType.value) return toast.showError({ description: "Please select the type of upload" });
     if (!uploadedFile.file) {
       return toast.showError({ description: "Please select a file to upload" });
     }
     setIsUploading(true);
     const formData = new FormData();
     formData.append("file", uploadedFile.file);
-    formData.append("uploadType", uploadType.value);
+    type == "csvUpload" && formData.append("uploadType", uploadType.value);
     api
-      .post(UPLOAD, formData, { "Content-Type": "multipart/form-data" })
+      .post(path, formData, { "Content-Type": "multipart/form-data" })
       .then((r) => {
         toast.showSuccess({ description: "File added successfully" });
         setIsUploading(false);
-        // handleRemoveFile();
+        setReturnLink && setReturnLink(process.env.REACT_APP_API_URL + "/" + r.data.link);
+        handleRemoveFile();
       })
       .catch(() => {
         toast.showError({ description: "Error in Uploading" });
@@ -72,13 +81,7 @@ function FileUploader() {
         ) : isUploading ? (
           <Spinner />
         ) : (
-          <Dropzone
-            onDrop={onDrop}
-            useFsAccessApi={false}
-            accept={{
-              "text/csv": [".csv"],
-            }}
-          >
+          <Dropzone onDrop={onDrop} useFsAccessApi={false} accept={accept}>
             {({ getRootProps, getInputProps }) => (
               <Flex
                 align="center"
@@ -105,35 +108,33 @@ function FileUploader() {
           </Dropzone>
         )}
       </Flex>
-      <Box w="300px" ml="40px" mr="20px">
-        <ReactSelect
-          value={uploadType}
-          name={"uploadType"}
-          options={[
-            { value: "user", label: "User" },
-            { value: "customer", label: "Customer" },
-          ]}
-          onChange={(selectedOption) => {
-            setUploadType(selectedOption);
-          }}
-          styles={{
-            menu: (provided) => ({
-              ...provided,
-              zIndex: 3,
-            }),
-          }}
-        />
-      </Box>
+      {type == "csvUpload" && (
+        <Box w="300px" ml="40px" mr="20px">
+          <ReactSelect
+            value={uploadType}
+            name={"uploadType"}
+            options={[
+              { value: "user", label: "User" },
+              { value: "customer", label: "Customer" },
+            ]}
+            onChange={(selectedOption) => {
+              setUploadType(selectedOption);
+            }}
+            styles={{
+              menu: (provided) => ({
+                ...provided,
+                zIndex: 3,
+              }),
+            }}
+          />
+        </Box>
+      )}
       <Button colorScheme={"teal"} isLoading={isUploading} onClick={() => onSubmit()}>
-        Submit
+        Upload
       </Button>
     </Stack>
   );
 }
-
-FileUploader.defaultProps = {
-  showHeader: true,
-};
 
 FileUploader.propTypes = {
   label: PropTypes.string,

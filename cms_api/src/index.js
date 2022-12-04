@@ -3,6 +3,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 const app = express();
 require("dotenv").config();
+const serveIndex = require("serve-index");
 const router = require("./routes");
 const { SendResponse } = require("./utils/app_response");
 
@@ -18,6 +19,9 @@ app.set("json replacer", (k, v) => (v === null || v === "" ? undefined : v));
 
 // All routes defined here
 app.use(router);
+
+app.use("/uploads", serveIndex("uploads"));
+app.use("/uploads", express.static("uploads"));
 
 // If no routes found
 app.use((req, res, next) => {
